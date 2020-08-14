@@ -31,7 +31,7 @@ const useStyles = makeStyles((theme) => ({
 export default function PhotoSearch() {
   const classes = useStyles();
   const [searchTerms, setSearchTerms] = useState<string>("");
-  const [searchResults, setSearchResults] = useState<PhotoItem[]>([]);
+  const [searchResults, setSearchResults] = useState<PhotoItem[]>();
   const [error, setError] = useState();
   const [processing, setProcessing] = useState<boolean>(false);
 
@@ -67,14 +67,14 @@ export default function PhotoSearch() {
             color="textSecondary"
             paragraph
           >
-            Search our amazing public domain photos.
+            Search our amazing public domain photos
           </Typography>
           <form noValidate autoComplete="off">
             <TextField
               value={searchTerms}
               onChange={(event) => handleSearchTermsChange(event.target.value)}
               fullWidth
-              placeholder="Start typing..."
+              placeholder="Start typing one or more search terms"
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
@@ -89,6 +89,11 @@ export default function PhotoSearch() {
               Oops, something went wrong, please try again later.
             </Alert>
           )}
+          {!processing && searchResults && searchResults.length === 0 && (
+            <Alert severity="info">
+              No search results, please try something else
+            </Alert>
+          )}
         </Container>
       </div>
       <Container className={classes.cardGrid} maxWidth="md">
@@ -101,6 +106,8 @@ export default function PhotoSearch() {
         )}
         <Grid container spacing={4}>
           {!processing &&
+            searchResults &&
+            searchResults.length > 0 &&
             searchResults.map((result) => {
               const authorRegexGroups = result.author.match(/(\(")(.+)("\))/);
               const author =
